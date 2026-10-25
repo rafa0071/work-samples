@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Monthly sales CSVs → Excel report (automation sample)</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,700&family=Source+Sans+3:wght@400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../../style.css">
+<style>
+  :root { --accent: #1f7a4d; --bg: #e4ece7; --paper: #fdfefd; }
+  .xl { border: 1px solid #cfe0d6; border-radius: 12px; overflow: hidden; margin: 10px 0 18px; background: #fff; }
+  .xl-bar { background: #1f7a4d; color: #fff; font-size: 13px; font-weight: 600; padding: 8px 14px; }
+  .xl table { font-size: 13px; } .xl th { background: #eef5f1; color: #1d2b24; } .xl td, .xl th { border-right: 1px solid #e5eee9; white-space: nowrap; }
+  .xl { overflow-x: auto; }
+  .flow { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; margin: 6px 0 20px; font-weight: 600; }
+  .flow span { background: #fff; border: 1px solid #cfe0d6; border-radius: 99px; padding: 6px 14px; font-size: 14px; }
+  pre { max-height: 420px; }
+</style>
+</head>
+<body>
+<div class="top"><a href="../../">← All samples</a><span>Automation sample · script and real output</span></div>
+<article class="doc">
+  <div class="kicker">Excel automation · merge &amp; summarize</div>
+  <h1>Monthly sales CSVs → Excel report</h1>
+  <div class="meta"><span><b>Input:</b> 3 monthly CSV exports</span><span><b>Output:</b> sales-report.xlsx (3 sheets)</span><span><b>Time saved:</b> ~1 hour/month of copy-paste</span></div>
+  <p style="margin:0">Every month the shop exported orders to a new CSV and someone merged them by hand. This script reads every CSV in a folder, calculates revenue, and writes a formatted workbook with a region × month summary (live SUM formulas), a top-products ranking and a filterable sheet with all orders.</p>
+  <h3>Output</h3><div class="xl"><div class="xl-bar">sales-report.xlsx · sheet "Summary" · 5 rows</div><table><tr><th>Region</th><th>2026-07</th><th>2026-08</th><th>2026-09</th><th>Total</th></tr><tr><td>East</td><td>907.8</td><td>633</td><td>714</td><td>2,254.8</td></tr><tr><td>North</td><td>872.4</td><td>866</td><td>870</td><td>2,608.4</td></tr><tr><td>South</td><td>1,343.7</td><td>1,095.2</td><td>1,426.4</td><td>3,865.3</td></tr><tr><td>West</td><td>1,003.6</td><td>1,106.8</td><td>462.5</td><td>2,572.9</td></tr><tr><td>Total</td><td>=SUM(B2:B5)</td><td>=SUM(C2:C5)</td><td>=SUM(D2:D5)</td><td>=SUM(E2:E5)</td></tr></table></div><div class="xl"><div class="xl-bar">sales-report.xlsx · sheet "Top products" · 5 rows</div><table><tr><th>Product</th><th>Units</th><th>Revenue</th></tr><tr><td>Wool throw</td><td>78</td><td>4,212</td></tr><tr><td>Mug set</td><td>88</td><td>2,156</td></tr><tr><td>Wall clock</td><td>58</td><td>1,856</td></tr><tr><td>Desk lamp</td><td>46</td><td>1,835.4</td></tr><tr><td>Planter</td><td>69</td><td>1,242</td></tr></table></div>
+  <h3>Input</h3><div class="flow"><span>2026-07.csv</span><span>2026-08.csv</span><span>2026-09.csv</span> → <span>merge-sales.js</span> → <span>sales-report.xlsx</span></div><pre><code>order_id,region,product,units,unit_price
+1001,East,Desk lamp,4,39.9
+1002,South,Wool throw,1,54
+1003,East,Wall clock,3,32
+1004,North,Wool throw,5,54
+1005,South,Wall clock,2,32
+…</code></pre>
+  
+  <h3>Script (excerpt) · <a href="merge-sales.js">full source</a></h3>
+  <pre><code>  const wb = new ExcelJS.Workbook();
+  wb.creator = 'sales-report script';
+
+  // Summary: revenue per region and month, with totals
+  const months = [...new Set(rows.map((r) =&gt; r.month))];
+  const regions = [...new Set(rows.map((r) =&gt; r.region))].sort();
+  const sum = wb.addWorksheet('Summary', { views: [{ state: 'frozen', ySplit: 1 }] });
+  sum.columns = [{ header: 'Region', key: 'region', width: 16 }, ...months.map((m) =&gt; ({ header: m, key: m, width: 14 })), { header: 'Total', key: 'total', width: 16 }];
+  for (const region of regions) {
+    const rec = { region };
+    for (const m of months) rec[m] = rows.filter((r) =&gt; r.region === region &amp;&amp; r.month === m).reduce((s, r) =&gt; s + r.revenue, 0);
+    rec.total = months.reduce((s, m) =&gt; s + rec[m], 0);
+    sum.addRow(rec);
+  }
+  const last = sum.rowCount;
+  const totalRow = sum.addRow({ region: 'Total' });
+  [...months, 'total'].forEach((key, i) =&gt; {
+    const col = sum.getColumn(i + 2).letter;
+    totalRow.getCell(key).value = { formula: `SUM(${col}2:${col}${last})` };
+  });
+
+  // Top products</code></pre>
+</article>
+<footer>Portfolio sample · fictional data · Node.js + ExcelJS</footer>
+</body>
+</html>
