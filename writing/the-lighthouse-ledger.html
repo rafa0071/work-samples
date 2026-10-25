@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The Lighthouse Ledger · Interactive mystery case (sample)</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,700&family=Source+Sans+3:wght@400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../style.css">
+<style>
+  :root { --paper: #fffaf0; --bg: #263238; --accent: #a0522d; }
+  .top { color: #b0bec5; } .top a { color: #ffe0b2; } footer { color: #90a4ae; }
+  .suspects { display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; }
+  .card { background: #fff; border: 1px solid var(--line); border-radius: 12px; padding: 16px 18px; font-size: 16px; }
+  .card b { font-size: 18px; display: block; }
+  .card small { color: var(--muted); }
+  details { background: #fff; border: 1px solid var(--line); border-radius: 12px; padding: 14px 18px; margin: 10px 0; }
+  summary { cursor: pointer; font-weight: 700; }
+  @media (max-width: 720px) { .suspects { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body>
+<div class="top"><a href="../">← All samples</a><span>Writing sample · original work</span></div>
+<article class="doc">
+  <div class="kicker">Interactive murder mystery · case file</div>
+  <h1>The Lighthouse Ledger</h1>
+  <div class="meta"><span><b>Players:</b> 1–6</span><span><b>Play time:</b> 60–90 min</span><span><b>Difficulty:</b> medium</span><span><b>Format:</b> case file + 9 evidence items</span></div>
+
+  <h2>The case</h2>
+  <p>On a stormy night on Gull Island, retired harbour master <b>Edmund Shaw</b> is found at the bottom of the lighthouse stairs. The island's only ferry stopped at 6 p.m.; whoever did it is still on the island. The police call it a fall. His granddaughter asks you to look again, because the ledger he never let out of his sight is missing.</p>
+
+  <h3>Suspects</h3>
+  <div class="suspects">
+    <div class="card"><b>Marta Llewellyn</b><small>Innkeeper, 52</small><p>Owed Edmund money for the inn's new roof. Says she was serving dinner until 10.</p></div>
+    <div class="card"><b>Callum Shaw</b><small>Nephew, 31</small><p>Inherits the lighthouse. Arrived "on the last ferry" and claims he never left his room.</p></div>
+    <div class="card"><b>Dr. Priya Nair</b><small>Marine biologist, 44</small><p>Fought Edmund over a fishing-ban report. Was "checking her tide sensors" at the pier.</p></div>
+    <div class="card"><b>Owen Pryce</b><small>Ferry captain, 60</small><p>Edmund's oldest friend. Says the storm kept him on the island for the night.</p></div>
+  </div>
+
+  <h3>Evidence (excerpt)</h3>
+  <table>
+    <tr><th>#</th><th>Item</th><th>What players learn</th></tr>
+    <tr><td>1</td><td>Ferry timetable</td><td>The last ferry left the mainland at 5:15 p.m., not 6 p.m., on storm days.</td></tr>
+    <tr><td>2</td><td>Inn dinner receipts</td><td>Marta rang up desserts at 9:12, 9:40 and 10:05 p.m.</td></tr>
+    <tr><td>3</td><td>Tide sensor log</td><td>Priya's sensor shows a manual reset at 9:31 p.m. at the pier.</td></tr>
+    <tr><td>4</td><td>Lighthouse lamp log</td><td>The lamp was switched off for 7 minutes at 9:48 p.m.</td></tr>
+    <tr><td>5</td><td>Callum's ferry ticket</td><td>Stamped with the 4:00 p.m. sailing, two hours earlier than he claims.</td></tr>
+    <tr><td>6</td><td>Page torn from the ledger</td><td>Lists "C.S. — £18,000 — 3rd warning".</td></tr>
+  </table>
+
+  <h3>Player questions</h3>
+  <p>1. Who killed Edmund Shaw? 2. How did they get into the lighthouse unseen? 3. Why was the lamp switched off?</p>
+
+  <details><summary>Solution (hidden from players)</summary>
+    <p><b>Callum Shaw.</b> He came on the 4 p.m. ferry (ticket, evidence 5), not the last one, giving him time to hide in the lighthouse store room. The ledger page shows his gambling debts to his uncle, who had given him a "third warning". At 9:48 p.m. Callum switched off the lamp so Owen, watching from the harbour, would not see two figures on the stairs. Red herrings: Marta (receipts give her an alibi) and Priya (the sensor reset is real but at the pier, a 20-minute walk away).</p>
+  </details>
+
+  <div class="note">Each case is delivered as a printable/digital case file, character sheets, evidence cards and a host guide with a fair-play solution that players can reach from the clues alone.</div>
+</article>
+<footer>Sample written for portfolio purposes · fictional people and places</footer>
+</body>
+</html>
