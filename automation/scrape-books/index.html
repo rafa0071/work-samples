@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Website catalogue → Excel (web scraping) (automation sample)</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,700&family=Source+Sans+3:wght@400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../../style.css">
+<style>
+  :root { --accent: #1f7a4d; --bg: #e4ece7; --paper: #fdfefd; }
+  .xl { border: 1px solid #cfe0d6; border-radius: 12px; overflow: hidden; margin: 10px 0 18px; background: #fff; }
+  .xl-bar { background: #1f7a4d; color: #fff; font-size: 13px; font-weight: 600; padding: 8px 14px; }
+  .xl table { font-size: 13px; } .xl th { background: #eef5f1; color: #1d2b24; } .xl td, .xl th { border-right: 1px solid #e5eee9; white-space: nowrap; }
+  .xl { overflow-x: auto; }
+  .flow { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; margin: 6px 0 20px; font-weight: 600; }
+  .flow span { background: #fff; border: 1px solid #cfe0d6; border-radius: 99px; padding: 6px 14px; font-size: 14px; }
+  pre { max-height: 420px; }
+</style>
+</head>
+<body>
+<div class="top"><a href="../../">← All samples</a><span>Automation sample · script and real output</span></div>
+<article class="doc">
+  <div class="kicker">Web scraping · data collection</div>
+  <h1>Website catalogue → Excel (web scraping)</h1>
+  <div class="meta"><span><b>Source:</b> books.toscrape.com (public practice site)</span><span><b>Output:</b> books.xlsx with Stats sheet</span><span><b>Polite:</b> 0.5 s delay between pages</span></div>
+  <p style="margin:0">Collects title, price, star rating, stock and link for every product across several catalogue pages, then saves a filterable Excel sheet plus quick stats. The same approach works for price monitoring, lead lists or product research on sites that allow it.</p>
+  <h3>Output</h3><div class="xl"><div class="xl-bar">books.xlsx · sheet "Books" · 60 rows</div><table><tr><th>Title</th><th>Price (£)</th><th>Rating</th><th>In stock</th></tr><tr><td>A Light in the Attic</td><td>51.77</td><td>3</td><td>Yes</td></tr><tr><td>Tipping the Velvet</td><td>53.74</td><td>1</td><td>Yes</td></tr><tr><td>Soumission</td><td>50.1</td><td>1</td><td>Yes</td></tr><tr><td>Sharp Objects</td><td>47.82</td><td>4</td><td>Yes</td></tr><tr><td>Sapiens: A Brief History of Humankind</td><td>54.23</td><td>5</td><td>Yes</td></tr><tr><td>The Requiem Red</td><td>22.65</td><td>1</td><td>Yes</td></tr><tr><td>The Dirty Little Secrets of Getting Your Dream Job</td><td>33.34</td><td>4</td><td>Yes</td></tr><tr><td>The Coming Woman: A Novel Based on the Life of the Infamous Feminist, Victoria Woodhull</td><td>17.93</td><td>3</td><td>Yes</td></tr><tr><td>The Boys in the Boat: Nine Americans and Their Epic Quest for Gold at the 1936 Berlin Olympics</td><td>22.6</td><td>4</td><td>Yes</td></tr><tr><td>The Black Maria</td><td>52.15</td><td>1</td><td>Yes</td></tr></table></div><div class="xl"><div class="xl-bar">books.xlsx · sheet "Stats" · 3 rows</div><table><tr><th>Books scraped</th><th>60</th></tr><tr><td>Average price (£)</td><td>35</td></tr><tr><td>5-star books</td><td>14</td></tr><tr><td>Cheapest</td><td>In Her Wake</td></tr></table></div>
+  
+  
+  <h3>Script (excerpt) · <a href="scrape-books.js">full source</a></h3>
+  <pre><code>  const books = [];
+  for (let p = 1; p &lt;= Number(pages); p++) {
+    const html = await (await fetch(`${BASE}page-${p}.html`)).text();
+    const $ = cheerio.load(html);
+    $('article.product_pod').each((_, el) =&gt; {
+      const a = $(el).find('h3 a');
+      books.push({
+        title: a.attr('title'),
+        price_gbp: Number($(el).find('.price_color').text().replace(/[^\d.]/g, '')),
+        rating: RATING[$(el).find('.star-rating').attr('class').split(' ')[1]],
+        in_stock: $(el).find('.instock').text().includes('In stock') ? 'Yes' : 'No',
+        url: BASE + a.attr('href'),
+      });
+    });
+    await sleep(500); // be polite to the server
+  }
+
+  const wb = new ExcelJS.Workbook();
+  const ws = wb.addWorksheet('Books');
+  ws.columns = [{ header: 'Title', key: 'title', width: 50 }, { header: 'Price (£)', key: 'price_gbp', width: 11 }, { header: 'Rating', key: 'rating', width: 8 }, { header: 'In stock', key: 'in_stock', width: 10 }, { header: 'URL', key: 'url', width: 60 }];
+  books.forEach((b) =&gt; ws.addRow(b));
+  ws.getRow(1).font = { bold: true, color: { argb: 'FFFFFFFF' } };</code></pre>
+</article>
+<footer>Portfolio sample · fictional data · Node.js + ExcelJS</footer>
+</body>
+</html>
