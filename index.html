@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Work Samples · Rafael Rojas</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,700&family=Source+Sans+3:wght@400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+<style>
+  .wrap { max-width: 1100px; margin: 0 auto; padding: 50px 20px; }
+  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 18px; margin-bottom: 40px; }
+  .grid a { background: #fff; border: 1px solid var(--line); border-radius: 14px; overflow: hidden; text-decoration: none; color: inherit; transition: transform .2s; }
+  .grid a:hover { transform: translateY(-3px); }
+  .grid img { width: 100%; height: auto; aspect-ratio: 16/10; object-fit: cover; object-position: top; display: block; border-bottom: 1px solid var(--line); }
+  .grid div { padding: 14px 16px; } .grid b { display: block; } .grid small { color: var(--muted); }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Work samples</h1>
+  <p style="color:var(--muted);max-width:640px">Writing, translation and spreadsheet automation samples. All stories, brands and data are original or fictional. For web development demos see <a href="https://rafa0071.github.io/web-demos/">web-demos</a>.</p>
+  <h2>Creative writing</h2>
+  <div class="grid" id="w"></div>
+  <h2>Translation (EN · ES · PT)</h2>
+  <div class="grid" id="t"></div>
+  <h2>Excel & data automation</h2>
+  <div class="grid" id="a"></div>
+</div>
+<script>
+  const S = {
+    w: [['writing/pip-shares-a-little.html', 'pip', 'Pip Shares a Little', 'Picture-book manuscript, ages 3–5'], ['writing/blackout-on-line-9.html', 'blackout', 'Blackout on Line 9', 'Detective novel, chapter one'], ['writing/la-luna-que-no-queria-dormir.html', 'luna', 'La luna que no quería dormir', 'Cuento para dormir en español'], ['writing/the-lighthouse-ledger.html', 'lighthouse', 'The Lighthouse Ledger', 'Interactive murder mystery case']],
+    t: [['translation/website-en-es.html', 'web-es', 'Restaurant website EN → ES', 'Website localization'], ['translation/app-strings-json.html', 'json', 'App strings EN → ES / PT-BR', 'i18n JSON with placeholders'], ['translation/subtitles-srt.html', 'srt', 'Video subtitles EN → ES', '.srt with timing rules'], ['translation/product-sheet-es-en.html', 'coffee', 'Coffee product sheet ES → EN', 'E-commerce, US units']],
+    a: [['automation/sales-report/', 'sales', 'Monthly CSVs → Excel report', 'Merge, summarize, formulas'], ['automation/clean-customers/', 'clean', 'Messy list → clean Excel', 'Normalize and deduplicate'], ['automation/invoices/', 'invoices', 'Excel → PDF invoices', 'One PDF per client'], ['automation/scrape-books/', 'scrape', 'Website → Excel scraping', 'Catalogue data collection']],
+  };
+  for (const k in S) document.getElementById(k).innerHTML = S[k].map(([href, img, t, d]) => `<a href="${href}"><img src="shots/${img}.png" alt="${t}" loading="lazy" width="640" height="400"><div><b>${t}</b><small>${d}</small></div></a>`).join('');
+</script>
+</body>
+</html>
