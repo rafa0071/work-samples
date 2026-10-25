@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>App UI strings · EN → ES / PT-BR (sample)</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,700&family=Source+Sans+3:wght@400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../style.css">
+<style>:root { --accent: #1f6f5c; --bg: #e7efec; } pre { font-size: 12px; margin: 0; white-space: pre-wrap; padding: 14px; } .three { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; } @media (max-width: 900px) { .three { grid-template-columns: 1fr; } } .k { color: #7ee0b5; } .s { color: #ffd479; }</style>
+</head>
+<body>
+<div class="top"><a href="../">← All samples</a><span>Translation sample</span></div>
+<article class="doc">
+  <div class="kicker">Software localization · i18n JSON</div>
+  <h1>Kettle & Co. store app</h1>
+  <div class="meta"><span><b>Source:</b> en.json</span><span><b>Targets:</b> es.json, pt-BR.json</span><span><b>Keys:</b> 10 shown (of 140)</span><span><b>Placeholders kept:</b> {count}, {amount}, {name}</span></div>
+
+  <div class="three">
+<pre><code>// en.json
+{
+ <span class="k">"cart.title"</span>: <span class="s">"Your cart"</span>,
+ <span class="k">"cart.empty"</span>: <span class="s">"Your cart is empty."</span>,
+ <span class="k">"cart.items"</span>: <span class="s">"{count} items"</span>,
+ <span class="k">"cart.freeShip"</span>: <span class="s">"Add {amount} more for free shipping"</span>,
+ <span class="k">"cart.unlocked"</span>: <span class="s">"You unlocked free shipping!"</span>,
+ <span class="k">"product.add"</span>: <span class="s">"Add to cart"</span>,
+ <span class="k">"product.added"</span>: <span class="s">"Added ✓"</span>,
+ <span class="k">"product.sale"</span>: <span class="s">"SALE"</span>,
+ <span class="k">"checkout.cta"</span>: <span class="s">"Checkout"</span>,
+ <span class="k">"greeting"</span>: <span class="s">"Welcome back, {name}!"</span>
+}</code></pre>
+<pre><code>// es.json
+{
+ <span class="k">"cart.title"</span>: <span class="s">"Tu carrito"</span>,
+ <span class="k">"cart.empty"</span>: <span class="s">"Tu carrito está vacío."</span>,
+ <span class="k">"cart.items"</span>: <span class="s">"{count} productos"</span>,
+ <span class="k">"cart.freeShip"</span>: <span class="s">"Agrega {amount} más y el envío es gratis"</span>,
+ <span class="k">"cart.unlocked"</span>: <span class="s">"¡Tienes envío gratis!"</span>,
+ <span class="k">"product.add"</span>: <span class="s">"Agregar al carrito"</span>,
+ <span class="k">"product.added"</span>: <span class="s">"Agregado ✓"</span>,
+ <span class="k">"product.sale"</span>: <span class="s">"OFERTA"</span>,
+ <span class="k">"checkout.cta"</span>: <span class="s">"Pagar"</span>,
+ <span class="k">"greeting"</span>: <span class="s">"¡Hola de nuevo, {name}!"</span>
+}</code></pre>
+<pre><code>// pt-BR.json
+{
+ <span class="k">"cart.title"</span>: <span class="s">"Seu carrinho"</span>,
+ <span class="k">"cart.empty"</span>: <span class="s">"Seu carrinho está vazio."</span>,
+ <span class="k">"cart.items"</span>: <span class="s">"{count} itens"</span>,
+ <span class="k">"cart.freeShip"</span>: <span class="s">"Faltam {amount} para o frete grátis"</span>,
+ <span class="k">"cart.unlocked"</span>: <span class="s">"Você ganhou frete grátis!"</span>,
+ <span class="k">"product.add"</span>: <span class="s">"Adicionar ao carrinho"</span>,
+ <span class="k">"product.added"</span>: <span class="s">"Adicionado ✓"</span>,
+ <span class="k">"product.sale"</span>: <span class="s">"PROMOÇÃO"</span>,
+ <span class="k">"checkout.cta"</span>: <span class="s">"Finalizar compra"</span>,
+ <span class="k">"greeting"</span>: <span class="s">"Que bom te ver de novo, {name}!"</span>
+}</code></pre>
+  </div>
+
+  <h3>Quality checks</h3>
+  <table>
+    <tr><th>Check</th><th>Result</th></tr>
+    <tr><td>Valid JSON, same keys in every file</td><td><span class="pill good">Passed</span></td></tr>
+    <tr><td>Placeholders {count} {amount} {name} unchanged</td><td><span class="pill good">Passed</span></td></tr>
+    <tr><td>Button labels fit (≤ 120% of English length)</td><td><span class="pill good">Passed</span> "Finalizar compra" flagged for a wider button</td></tr>
+    <tr><td>Plural forms</td><td>Suggested ICU plural for "{count} items" so "1 producto / 2 productos" reads correctly</td></tr>
+  </table>
+</article>
+<footer>Portfolio sample · fictional store</footer>
+</body>
+</html>
