@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Messy customer list → clean Excel (automation sample)</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,700&family=Source+Sans+3:wght@400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../../style.css">
+<style>
+  :root { --accent: #1f7a4d; --bg: #e4ece7; --paper: #fdfefd; }
+  .xl { border: 1px solid #cfe0d6; border-radius: 12px; overflow: hidden; margin: 10px 0 18px; background: #fff; }
+  .xl-bar { background: #1f7a4d; color: #fff; font-size: 13px; font-weight: 600; padding: 8px 14px; }
+  .xl table { font-size: 13px; } .xl th { background: #eef5f1; color: #1d2b24; } .xl td, .xl th { border-right: 1px solid #e5eee9; white-space: nowrap; }
+  .xl { overflow-x: auto; }
+  .flow { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; margin: 6px 0 20px; font-weight: 600; }
+  .flow span { background: #fff; border: 1px solid #cfe0d6; border-radius: 99px; padding: 6px 14px; font-size: 14px; }
+  pre { max-height: 420px; }
+</style>
+</head>
+<body>
+<div class="top"><a href="../../">← All samples</a><span>Automation sample · script and real output</span></div>
+<article class="doc">
+  <div class="kicker">Data cleaning · deduplication</div>
+  <h1>Messy customer list → clean Excel</h1>
+  <div class="meta"><span><b>Input:</b> customers-raw.csv</span><span><b>Output:</b> customers-clean.xlsx + Issues sheet</span><span><b>Fixes:</b> names, emails, phones, cities, dates, duplicates</span></div>
+  <p style="margin:0">A CRM export with mixed casing, three date formats, phones written five different ways and repeated customers. The script normalizes every field, removes duplicates by email, highlights rows that still need a human look, and lists every problem it found.</p>
+  <h3>Output</h3><div class="xl"><div class="xl-bar">customers-clean.xlsx · sheet "Customers" · 6 rows</div><table><tr><th>name</th><th>email</th><th>phone</th><th>city</th><th>signup_date</th><th>status</th></tr><tr><td>Maria Garcia</td><td>maria.garcia@example.com</td><td>+1 555-010-2233</td><td>Bogotá</td><td>2026-03-04</td><td>OK</td></tr><tr><td>John Smith</td><td>john.smith@example.com</td><td>+1 555-010-4455</td><td>New York</td><td>2026-04-03</td><td>OK</td></tr><tr><td>Li Wei</td><td>li.wei@example</td><td>+1 555-010-7788</td><td>Shanghai</td><td>2026-03-07</td><td>Check email</td></tr><tr><td>Ana Souza</td><td>ana.souza@example.com</td><td>+1 555-010-9900</td><td>São Paulo</td><td>2026-03-07</td><td>OK</td></tr><tr><td>Omar Haddad</td><td>omar.haddad@example.com</td><td>+1 555-010-1212</td><td>Riyadh</td><td>2026-03-09</td><td>OK</td></tr><tr><td>Chloé Martin</td><td>chloe.martin@example.com</td><td>+1 555-010-3434</td><td>Paris</td><td>2026-03-10</td><td>OK</td></tr></table></div><div class="xl"><div class="xl-bar">customers-clean.xlsx · sheet "Issues" · 4 rows</div><table><tr><th>source row</th><th>field</th><th>problem</th></tr><tr><td>4</td><td>duplicate</td><td>Duplicate of row 2 (Maria Garcia)</td></tr><tr><td>5</td><td>email</td><td>Invalid email "li.wei@example"</td></tr><tr><td>7</td><td>name</td><td>Empty name, row skipped</td></tr><tr><td>8</td><td>duplicate</td><td>Duplicate of row 3 (John Smith)</td></tr></table></div>
+  <h3>Input</h3><pre><code>name,email,phone,city,signup_date
+  maria GARCIA ,Maria.Garcia@Example.com ,(555) 010-2233,bogota,2026/03/04
+John Smith,john.smith@example.com,555.010.4455,New York,04-03-2026
+maria garcia,maria.garcia@example.com,5550102233,Bogotá,2026-03-04
+Li Wei,li.wei@example,555-010-7788,Shanghai,2026-03-07
+Ana  Souza,ana.souza@example.com,+1 555 010 9900,sao paulo,7 Mar 2026
+,empty.row@example.com,,,
+JOHN SMITH,JOHN.SMITH@EXAMPLE.COM,555 010 4455,new york,2026-03-04
+Omar Haddad,omar.haddad@example.com,555-010-1212,Riyadh,2026-03-09
+Chloé Martin,chloe.martin@example.com,555 010 3434,paris,2026-03-10</code></pre>
+  
+  <h3>Script (excerpt) · <a href="clean-customers.js">full source</a></h3>
+  <pre><code>
+function normPhone(s) {
+  const digits = s.replace(/\D/g, '').replace(/^1(?=\d{10}$)/, '');
+  return digits.length === 10 ? `+1 ${digits.slice(0, 3)}-${digits.slice(3, 6)}-${digits.slice(6)}` : null;
+}
+function normDate(s) {
+  s = s.trim();
+  let m;
+  if ((m = s.match(/^(\d{4})[-/](\d{1,2})[-/](\d{1,2})$/))) return [m[1], m[2], m[3]];
+  if ((m = s.match(/^(\d{1,2})-(\d{1,2})-(\d{4})$/))) return [m[3], m[1], m[2]]; // US style MM-DD-YYYY
+  if ((m = s.match(/^(\d{1,2}) (\w{3}) (\d{4})$/))) return [m[3], MONTHS[m[2].toLowerCase()], m[1]];
+  return null;
+}
+
+async function main() {
+  const [header, ...lines] = fs.readFileSync(input, 'utf8').trim().split(/\r?\n/);
+  const cols = header.split(',');
+  const clean = [], issues = [], seen = new Map();</code></pre>
+</article>
+<footer>Portfolio sample · fictional data · Node.js + ExcelJS</footer>
+</body>
+</html>

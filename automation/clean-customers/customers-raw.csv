@@ -1,0 +1,10 @@
+name,email,phone,city,signup_date
+  maria GARCIA ,Maria.Garcia@Example.com ,(555) 010-2233,bogota,2026/03/04
+John Smith,john.smith@example.com,555.010.4455,New York,04-03-2026
+maria garcia,maria.garcia@example.com,5550102233,Bogotá,2026-03-04
+Li Wei,li.wei@example,555-010-7788,Shanghai,2026-03-07
+Ana  Souza,ana.souza@example.com,+1 555 010 9900,sao paulo,7 Mar 2026
+,empty.row@example.com,,,
+JOHN SMITH,JOHN.SMITH@EXAMPLE.COM,555 010 4455,new york,2026-03-04
+Omar Haddad,omar.haddad@example.com,555-010-1212,Riyadh,2026-03-09
+Chloé Martin,chloe.martin@example.com,555 010 3434,paris,2026-03-10
