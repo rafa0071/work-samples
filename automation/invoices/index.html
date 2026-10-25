@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Excel billing sheet → PDF invoices (automation sample)</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,700&family=Source+Sans+3:wght@400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../../style.css">
+<style>
+  :root { --accent: #1f7a4d; --bg: #e4ece7; --paper: #fdfefd; }
+  .xl { border: 1px solid #cfe0d6; border-radius: 12px; overflow: hidden; margin: 10px 0 18px; background: #fff; }
+  .xl-bar { background: #1f7a4d; color: #fff; font-size: 13px; font-weight: 600; padding: 8px 14px; }
+  .xl table { font-size: 13px; } .xl th { background: #eef5f1; color: #1d2b24; } .xl td, .xl th { border-right: 1px solid #e5eee9; white-space: nowrap; }
+  .xl { overflow-x: auto; }
+  .flow { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; margin: 6px 0 20px; font-weight: 600; }
+  .flow span { background: #fff; border: 1px solid #cfe0d6; border-radius: 99px; padding: 6px 14px; font-size: 14px; }
+  pre { max-height: 420px; }
+</style>
+</head>
+<body>
+<div class="top"><a href="../../">← All samples</a><span>Automation sample · script and real output</span></div>
+<article class="doc">
+  <div class="kicker">Document automation · PDF</div>
+  <h1>Excel billing sheet → PDF invoices</h1>
+  <div class="meta"><span><b>Input:</b> billing.xlsx</span><span><b>Output:</b> 3 PDF invoices</span><span><b>Grouping:</b> one invoice per client</span></div>
+  <p style="margin:0">Billable lines are kept in a simple spreadsheet. The script groups them by client, numbers the invoices, calculates line amounts and totals, and creates a clean branded PDF for each client, ready to email.</p>
+  <h3>Output</h3><table><tr><th>Generated file</th><th>Preview</th></tr><tr><td>INV-2026-141 Harbor Coffee Roasters.pdf</td><td><a href="pdf/INV-2026-141%20Harbor%20Coffee%20Roasters.pdf">open PDF</a></td></tr><tr><td>INV-2026-142 Lumen Studio.pdf</td><td><a href="pdf/INV-2026-142%20Lumen%20Studio.pdf">open PDF</a></td></tr><tr><td>INV-2026-143 Northwind Goods.pdf</td><td><a href="pdf/INV-2026-143%20Northwind%20Goods.pdf">open PDF</a></td></tr></table>
+  <h3>Input</h3><div class="xl"><div class="xl-bar">billing.xlsx · sheet "Billing" · 5 rows</div><table><tr><th>client</th><th>email</th><th>description</th><th>qty</th><th>rate</th></tr><tr><td>Harbor Coffee Roasters</td><td>ap@harborcoffee.example</td><td>Website maintenance (October)</td><td>1</td><td>180</td></tr><tr><td>Harbor Coffee Roasters</td><td>ap@harborcoffee.example</td><td>Product photo retouching</td><td>12</td><td>8.5</td></tr><tr><td>Lumen Studio</td><td>hello@lumenstudio.example</td><td>Booking page updates</td><td>3</td><td>45</td></tr><tr><td>Lumen Studio</td><td>hello@lumenstudio.example</td><td>Monthly analytics report</td><td>1</td><td>90</td></tr><tr><td>Northwind Goods</td><td>billing@northwind.example</td><td>Data cleanup script</td><td>1</td><td>240</td></tr></table></div>
+  
+  <h3>Script (excerpt) · <a href="make-invoices.js">full source</a></h3>
+  <pre><code>  const clients = [...new Set(lines.map((l) =&gt; l.client))];
+  fs.mkdirSync(outDir, { recursive: true });
+  let n = 140;
+  for (const client of clients) {
+    const items = lines.filter((l) =&gt; l.client === client);
+    const number = `INV-2026-${++n}`;
+    const doc = new PDFDocument({ size: 'A4', margin: 50 });
+    const file = path.join(outDir, `${number} ${client}.pdf`);
+    doc.pipe(fs.createWriteStream(file));
+    doc.fillColor('#1F7A4D').fontSize(26).text('INVOICE', { align: 'right' });
+    doc.fillColor('#333').fontSize(10).text(number, { align: 'right' }).text('Issued: Oct 25, 2026 · Due in 14 days', { align: 'right' });
+    doc.moveDown(2).fontSize(11).fillColor('#888').text('BILL TO').fillColor('#111').fontSize(13).text(client).fontSize(10).fillColor('#555').text(items[0].email);
+    doc.moveDown(1.5);
+    const top = doc.y;
+    doc.fontSize(9).fillColor('#888').text('DESCRIPTION', 50, top).text('QTY', 330, top).text('RATE', 390, top).text('AMOUNT', 470, top);
+    doc.moveTo(50, top + 14).lineTo(545, top + 14).strokeColor('#ddd').stroke();
+    let y = top + 22, total = 0;
+    for (const it of items) {
+      const amount = it.qty * it.rate;
+      total += amount;
+      doc.fontSize(10).fillColor('#111').text(it.description, 50, y, { width: 270 }).text(String(it.qty), 330, y).text(money(it.rate), 390, y).text(money(amount), 470, y);
+      y += 22;
+    }
+    doc.moveTo(330, y + 4).lineTo(545, y + 4).strokeColor('#1F7A4D').stroke();</code></pre>
+</article>
+<footer>Portfolio sample · fictional data · Node.js + ExcelJS</footer>
+</body>
+</html>
